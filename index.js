@@ -5,14 +5,16 @@ var serialport = require("serialport"),
   request = require("request");
 
 // Settings
-var port = "COM3",
+var port = "COM9",
   full = {
     w: 1920,
     h: 1080
   },
   actual = {
-    w: 160,
-    h: 90
+    //w: 10.6667,
+    //h: 6
+    w: 16,
+    h: 9
   };
 
 function sendG(port, g) {
@@ -26,6 +28,10 @@ function printGRBLOutput(data) {
 };
 
 function scalePosition(position, fullSize, actualSize) {
+  // Temporary position correction to deal with Planchette offset
+  position.x += 100;
+  position.y += 122;
+
   return {
     x: position.x / (fullSize.w / actualSize.w),
     y: position.y / (fullSize.h / actualSize.h),
@@ -38,7 +44,7 @@ function movePlanchette() {
   request("http://webji.mndktchn.com/pos", function(err, res, body) {
     if (body !== undefined) {
       pos = scalePosition(JSON.parse(body), full, actual);
-      sendG(grbl, "G0 X" + pos.x + "Y" + -pos.y);
+      sendG(grbl, "G90 G0 F200 X" + pos.x + "Y" + pos.y);
     }
   });
 }
@@ -51,4 +57,4 @@ var grbl = new SerialPort(port, {
 
 grbl.on("data", printGRBLOutput);
 
-setInterval(movePlanchette, 250);
+setInterval(movePlanchette, 1000);
