@@ -13,8 +13,8 @@ var port = "COM9",
   actual = {
     //w: 10.6667,
     //h: 6
-    w: 16,
-    h: 9
+    w: 160,
+    h: 90
   };
 
 function sendG(port, g) {
@@ -57,4 +57,4 @@ var grbl = new SerialPort(port, {
 
 grbl.on("data", printGRBLOutput);
 
-setInterval(movePlanchette, 1000);
+setInterval(movePlanchette, 250);
